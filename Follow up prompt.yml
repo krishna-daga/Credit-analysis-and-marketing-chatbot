@@ -1,0 +1,208 @@
+Follow up prompt:
+""""
+ 
+   
+    #Context:
+    Given a context list containing previous questions and answers, and the current question, your task is to perform a semantic similarity to the previous question and determine if the current querstion is a follow-up to the previous questions or not.
+    After this, you need to return a standalone version of the current question such that it can be answered individually.
+    Input format: 
+    User query: {user_query}
+    context_list : {context_list}
+    Output Format:
+    Response: The model's response should be the standalone version of the follow-up question, or the current question if it is not a follow-up.
+    
+    Specifications:
+    Task: Analyze the provided context {context_list} which is a string containing previous questions and it's answers seperated by a new line with the current question, to determine if it is a follow-up question to the previous context.
+    
+    Instructions:
+    1. Determine if the current question is a follow-up to the previous conversation stored in the Context list.
+    2. If the current question is a follow-up:
+    - Generate a standalone version of the follow-up question based on the information from the previous question and its answer. Sometimes, the current question may be a follow-up question but it might not include the loan id. You must obtain the same information from the previous Question in the context list.
+    - Return the standalone follow-up question.
+    3. If the current question is not a follow-up, return the question as it is, treating it as a new question.
+    4. The standalone question format must include loan id.
+    5. Avoid providing personal explanations for why a question is a follow-up; return the output directly.
+    6. Ensure the standalone version of the follow-up question is clear and can be answered independently.
+    7. The decision whether the current question is a follow-up or not has to be made very accurately. This is very important.
+    
+    Task Examples:
+    
+    Example 1:
+    
+    Current Question: "What is their cibil rating?"
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+    Context List: ["Question: What is the income level of loan id 17? \n Answer: The income level of Vikas is high"]
+    Decision: In the current question, 'Their' refers to loan id which is 17 as seen in the context list. Hence the current question is a follow-up to the previous question and hence a standalone version of the current question must be generated.
+    Response:
+    "What is the cibil rating of loan id 17?"
+    
+    Example 2:
+
+    Current Question: "What is the CIBIL rating for loan ID 2?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List: ["Question: What is the income level for loan ID 1? \n Answer: The income level for Vikas with loan ID 1 is high"]
+
+    Decision: In the current question, the bank agent is asking a different question for a different user, about the CIBIL rating for another specific loan ID (loan ID 2). Hence it is a new question and not a follow-up question to the previous question.
+
+    Response:
+    "What is the CIBIL rating for loan ID 2?"
+
+
+    Example 3:
+
+
+    Current Question: "Can her loan be approved?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List:
+    ["Question: What is the CIBIL rating for loan ID 2? \n Answer: The CIBIL rating of shalini with loan ID 2 is excellent",
+    "Question: What is their loan term? \n Answer: The loan term of Shalini with loan id 2 is 8"]
+
+    Decision: The current question is asking about loan approval where 'her' refers to shalini whose loan id is 2 it is a follow up question to a follow up question, which means it is a follow-up to the previous question and it's previous question. Hence, a standalone version of the current question must be generated.
+
+    Response: "Can loan be approved for loan ID 2?" 
+    
+
+    Example 4:
+
+    Current Question: "What is the loan term for him?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List: ["Question: What is the loan approval status for loan ID 3? \n Answer: The loan approval status for John with loan ID 3 is Approved"]
+
+    Decision: The bank agent is seeking information about the loan terms where "him" refers to John with loan Id 3 as seen in previous answer, which is a follow-up question related to the previous question about loan approval status. Hence, a standalone version of the current question must be generated.
+
+    Response:
+    "What are the loan terms for loan ID 3?"
+
+
+    Response:
+    "Could you provide details about the loan approval status for loan ID 4?"
+    
+    
+    Additional Information:
+    1. Rephrase the current question meaningfully and grammatically.
+    2. Ensure the standalone question format includes identification and mention of Company, Quarter, and Year and the finanial information that is being asked for in the current or previous question.
+    3. Avoid providing personal interpretations or explanations.
+    4. Base the response solely on the given context without speculation.
+    5. Adhere strictly to the specified output format and instructions.
+    
+    Restrictions:
+    1. Avoid providing personal explanations or interpretations for why a question is a follow-up. Only give standalone question, this is very important.
+    2. Return the output directly without additional commentary. You need to return only the standalone question and nothing else.
+    3. Adhere strictly to the provided specifications and instructions.
+    
+    Here is the Current Question: {user_query}
+    Here is the Context for the Current Question which includes the previous question and answers: {context_prev_q_a}
+    
+    
+    
+    """
+
+
+
+
+    Task Examples:
+    
+    Example 1:
+    
+    Current Question: "What is their cibil rating?"
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+    Previous Question Answer List: ["Question: What is the income level of loan id 1? \n Answer: The income level of Vikas with loan id 1 is high"]
+    Decision: In the current question, 'Their' refers to Vikas with loan id 1. Hence the current question is a follow-up to the previous question and hence a standalone version of the current question must be generated.
+    Response:
+    What is the cibil rating of loan id 1?
+    
+    Example 2:
+
+    Current Question: "What is the CIBIL rating for loan ID 2?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List: ["Question: What is the income level for loan ID 1? \n Answer: The income level for Vikas with loan ID 1 is high"]
+
+    Decision: In the current question, the bank agent is asking a different question for a different user, about the CIBIL rating for another specific loan ID (loan ID 2). Hence it is a new question and not a follow-up question to the previous question.
+
+    Response:
+    What is the CIBIL rating for loan ID 2?
+
+
+    Example 3:
+
+
+    Current Question: "Can her loan be approved?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List:
+    ["Question: What is the CIBIL rating for loan ID 2? \n Answer: The CIBIL rating of shalini with loan ID 2 is excellent",
+    "Question: What is their loan term? \n Answer: The loan term of Shalini with loan id 2 is 8"]
+
+    Decision: The current question is asking about loan approval where 'her' refers to shalini whose loan id is 2 it is a follow up question to a follow up question, which means it is a follow-up to the previous question and it's previous question. Hence, a standalone version of the current question must be generated.
+
+    Response: Can loan be approved for loan ID 2?
+    
+
+    Example 4:
+
+    Current Question: "What is the loan term for him?"
+
+    Decision to Rephrase: This question is grammatically correct so no need to rephrase.
+
+    Previous Question Answer List: ["Question: What is the loan approval status for loan ID 3? \n Answer: The loan approval status for John with loan ID 3 is Approved"]
+
+    Decision: The bank agent is seeking information about the loan terms where "him" refers to John with loan Id 3 as seen in previous answer, which is a follow-up question related to the previous question about loan approval status. Hence, a standalone version of the current question must be generated.
+
+    Response:
+    What are the loan terms for loan ID 3?
+
+    Combined summary prompt:
+    #     prompt = """
+# ### Task:
+
+# Your task as a summarization assistant is to synthesize the information provided in the input list {all_the_llm_responses} into a cohesive and comprehensive answer.
+
+# ### Output format:
+# The model's response should only include the combined response and should avoid referencing specific parameters mentioned in the examples.
+
+# ### Instructions:
+
+# - Utilize the information from the input list {all_the_llm_responses} to construct a unified and logically structured answer.
+# - Ensure that the response maintains clarity, coherence, and relevance to the overall context without focusing on specific parameters or examples.
+
+# ### Task Examples:
+# Example 1:      
+# Input list: 
+# ['Cibil rating of Loan id 1 is 750.', 'Income level of Loan id 1 is High.', 'Cibil rating of Loan id 2 is 800.', 'Income level of Loan id 2 is Medium.']
+
+# Combined Response (example):  
+# "The analysis reveals that Loan id 1 has a Cibil rating of 750, with a corresponding high income level. In contrast, Loan id 2 has a Cibil rating of 800, accompanied by a medium income level."
+
+# ### Additional Notes:
+# - Emphasize generating responses based on the entire input list without focusing on individual parameters or examples.
+# - Avoid duplicating information or providing conflicting responses in the combined answer.
+
+# Example 2:
+
+# Input list:
+# ['The cibil rating of loan id 1 is Excellent.', 'The loan status of loan id 1 is approved for Tyler Orozco.']
+
+# Combined Response (example):  
+# "The analysis reveals that Loan id 1 has Excellent cibil rating, with a corresponding high income level and their loan status has been approved"
+
+# """
+#     response = llm.chat.completions.create(
+#     model="GPT35TURBO",
+#     temperature=0.7,
+#     max_tokens=1000,
+#     top_p=0,
+#     messages=[
+#         {"role": "user", "content": prompt}
+#     ],
+#     )
+    
+#     answer = response.choices[0].message.content
